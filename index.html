@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2344/2344132.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Scientific Calculator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #ffffff;
+            --accent: #10b981;
+            --op: #f59e0b;
+        }
+
+        /* Light Theme */
+        .light-theme {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --accent: #2563eb;
+            --op: #7c3aed;
+        }
+
+        /* Neon Theme */
+        .neon-theme {
+            --bg: #000000;
+            --card: #111111;
+            --text: #00ff00;
+            --accent: #ff00ff;
+            --op: #00ffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.4s ease;
+        }
+
+        .calc-container {
+            background-color: var(--card);
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 420px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        #display {
+            width: 100%;
+            height: 70px;
+            background: rgba(0,0,0,0.2);
+            border: none;
+            border-radius: 15px;
+            color: var(--accent);
+            font-size: 2rem;
+            text-align: right;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            height: 55px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(1.3);
+            transform: scale(1.05);
+        }
+
+        .op { color: var(--op); }
+        .sci { color: var(--accent); font-style: italic; }
+        .equal { 
+            grid-column: span 2; 
+            background: var(--accent); 
+            color: white; 
+            font-size: 1.5rem;
+        }
+        .ac { background: #ef4444; color: white; }
+
+        .theme-btn {
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+
+    <div class="top-bar" style="width: 400px; margin-bottom: 10px;">
+        <span style="font-weight: bold;">SMART CALC v3.0</span>
+        <button class="theme-btn" onclick="toggleTheme()">Change Theme 🎨</button>
+    </div>
+
+    <div class="calc-container">
+        <input type="text" id="display" readonly placeholder="0">
+        
+        <div class="grid">
+            <!-- Row 1 -->
+            <button class="sci" onclick="add('Math.sin(')">sin</button>
+            <button class="sci" onclick="add('Math.cos(')">cos</button>
+            <button class="sci" onclick="add('Math.tan(')">tan</button>
+            <button class="sci" onclick="add('Math.log10(')">log</button>
+            <button class="ac" onclick="clearScreen()">AC</button>
+
+            <!-- Row 2 -->
+            <button class="sci" onclick="add('Math.PI')">π</button>
+            <button class="sci" onclick="add('Math.E')">e</button>
+            <button class="sci" onclick="add('**')">xʸ</button>
+            <button class="sci" onclick="add('Math.sqrt(')">√</button>
+            <button class="op" onclick="backspace()">⌫</button>
+
+            <!-- Row 3 -->
+            <button class="op" onclick="add('(')">(</button>
+            <button class="op" onclick="add(')')">)</button>
+            <button class="sci" onclick="fact()">n!</button>
+            <button class="sci" onclick="add('Math.exp(')">exp</button>
+            <button class="op" onclick="add('/')">÷</button>
+
+            <!-- Numbers -->
+            <button onclick="add('7')">7</button>
+            <button onclick="add('8')">8</button>
+            <button onclick="add('9')">9</button>
+            <button class="op" onclick="add('*')">×</button>
+            <button class="sci" onclick="add('**2')">x²</button>
+
+            <button onclick="add('4')">4</button>
+            <button onclick="add('5')">5</button>
+            <button onclick="add('6')">6</button>
+            <button class="op" onclick="add('-')">−</button>
+            <button class="sci" onclick="add('%')">mod</button>
+
+            <button onclick="add('1')">1</button>
+            <button onclick="add('2')">2</button>
+            <button onclick="add('3')">3</button>
+            <button class="op" onclick="add('+')">+</button>
+            <button class="sci" onclick="add('Math.abs(')">|x|</button>
+
+            <button onclick="add('0')">0</button>
+            <button onclick="add('.')">.</button>
+            <button class="equal" onclick="calc()">=</button>
+            <button class="op" onclick="add('Math.pow(')">pwr</button>
+        </div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('display');
+        let themes = ['dark-theme', 'light-theme', 'neon-theme'];
+        let currentTheme = 0;
+
+        function toggleTheme() {
+            document.body.classList.remove(themes[currentTheme]);
+            currentTheme = (currentTheme + 1) % themes.length;
+            document.body.classList.add(themes[currentTheme]);
+        }
+
+        function add(v) { screen.value += v; }
+        function clearScreen() { screen.value = ''; }
+        function backspace() { screen.value = screen.value.slice(0, -1); }
+
+        function fact() {
+            let num = parseInt(screen.value);
+            if(num < 0) return screen.value = "Error";
+            let f = 1;
+            for(let i=1; i<=num; i++) f *= i;
+            screen.value = f;
+        }
+
+        function calc() {
+            try {
+                let exp = screen.value;
+                // Auto-close brackets
+                let open = (exp.match(/\(/g) || []).length;
+                let close = (exp.match(/\)/g) || []).length;
+                for(let i=0; i < (open-close); i++) exp += ')';
+                
+                let res = eval(exp);
+                screen.value = Number.isInteger(res) ? res : res.toFixed(4);
+            } catch {
+                screen.value = "YOU DONT WRITE!";
+                setTimeout(clearScreen, 1500);
+            }
+        }
+    </script>
+</body>
+</html>
