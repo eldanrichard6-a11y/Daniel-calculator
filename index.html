@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Scientific Calc</title>
+    
+    <title>Daniel Calculator - Pro Scientific Tool</title>
+    <meta name="description" content="Tumia Daniel Calculator kufanya mahesabu magumu ya kisayansi. Calculator bora kwa wanafunzi na wataalamu.">
+    <meta name="keywords" content="Daniel Calculator, Online Calculator, Scientific Calculator, Daniel Calc">
+    <meta name="author" content="Daniel">
 
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/jpeg" href="icon.jpg">
+    <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#38bdf8">
+
     <style>
-        /* CSS - Muonekano (Zile kodi za urembo nilizokupa awali) */
         :root {
             --bg-color: #0f172a;
             --calc-bg: rgba(30, 41, 59, 0.7);
@@ -25,10 +29,21 @@
             color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
+            flex-direction: column; /* Ili kichwa cha habari kikae juu */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+        }
+
+        /* Jina la Website lionekane juu ya Calculator */
+        .brand-name {
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .calculator {
@@ -37,7 +52,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 25px;
             border-radius: 30px;
-            width: 100%;
+            width: 90%;
             max-width: 450px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
@@ -85,6 +100,7 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             color: white;
             background: rgba(255, 255, 255, 0.05);
+            -webkit-tap-highlight-color: transparent; /* Kwa ajili ya simu */
         }
 
         button:hover {
@@ -113,9 +129,18 @@
             padding-top: 10px;
             color: #94a3b8;
         }
+
+        /* Mobile optimization */
+        @media (max-width: 400px) {
+            .grid { gap: 8px; }
+            button { height: 50px; font-size: 14px; }
+            .brand-name { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
+
+<div class="brand-name">Daniel Calculator</div>
 
 <div class="calculator">
     <div class="screen">
@@ -166,7 +191,6 @@
 </div>
 
 <script>
-    // JavaScript Logic (Zile kodi za mahesabu)
     const mainDisp = document.getElementById('main-display');
     const histDisp = document.getElementById('history-display');
     const logs = document.getElementById('logs');
@@ -178,6 +202,9 @@
     function solve() {
         try {
             let expression = mainDisp.value;
+            if (!expression) return;
+
+            // Kufunga mabano kiotomatiki
             let openBrackets = (expression.match(/\(/g) || []).length;
             let closeBrackets = (expression.match(/\)/g) || []).length;
             while(openBrackets > closeBrackets) { expression += ')'; closeBrackets++; }
@@ -198,16 +225,20 @@
         }
     }
 
+    // Support kwa Keyboard
     document.addEventListener('keydown', (e) => {
-        if (e.key >= '0' && e.key <= '9') push(e.key);
-        if (e.key === '+') push('+');
-        if (e.key === '-') push('-');
-        if (e.key === '*') push('*');
-        if (e.key === '/') push('/');
-        if (e.key === 'Enter') solve();
+        if ((e.key >= '0' && e.key <= '9') || e.key === '.') push(e.key);
+        if (['+', '-', '*', '/'].includes(e.key)) push(e.key);
+        if (e.key === 'Enter') { e.preventDefault(); solve(); }
         if (e.key === 'Backspace') back();
         if (e.key === 'Escape') clearAll();
     });
+
+    // Sajili Service Worker kwa ajili ya Offline (PWA)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("Service Worker Registered"));
+    }
 </script>
 </body>
 </html>
